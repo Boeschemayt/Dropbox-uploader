@@ -11,7 +11,7 @@ def main():
 def getAccessToken():
     global client
     with open("AuthCode.txt","r") as text_file:
-        access_token = text_file.readline().split().ToString()
+        access_token = text_file.readline().rstrip()
         client = dropbox.client.DropboxClient(access_token)   
         
 def printClientInfo():
