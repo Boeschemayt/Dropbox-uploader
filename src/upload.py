@@ -15,7 +15,9 @@ def getAccessToken():
         client = dropbox.client.DropboxClient(access_token)   
         
 def upload(uploadFile):
-    client.put_file("/"+uploadFile, uploadFile)
+    try
+    upload = open(uploadFile, "rb")
+    client.put_file("/"+uploadFile, upload)
     
 
 
