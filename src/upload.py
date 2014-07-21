@@ -8,13 +8,15 @@ def main(argv):
         getAccessToken()
         upload(sys.argv[2])
     else:
+        getAccessToken()
         info()
 
 def getAccessToken():
     global client
     with open("AuthCode.txt", "r") as text_file:
         access_token = text_file.readline().rstrip()
-        client = dropbox.client.DropboxClient(access_token)   
+        client = dropbox.client.DropboxClient(access_token)
+    return access_token   
         
 def upload(uploadFile):
     try:
@@ -25,7 +27,10 @@ def upload(uploadFile):
         print "Something went wrong. " + ErrorResponse
         
 def info():
-    print "some info."
+    info = client.account_info()
+    print "Display name >> " +info["display_name"]        
+    print "Country >> " +info["country"]
+        
 
 if __name__ == "__main__":
     main(sys.argv[1])
