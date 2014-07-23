@@ -7,9 +7,9 @@ def main(argv):
     if argv == "upload":
         getAccessToken()
         upload(sys.argv[2])
-    elif argv == "list":
+    elif argv == "ls":
         getAccessToken()
-        list()
+        ls(sys.argv[2])
     elif argv == "info":
         getAccessToken()
         info()
@@ -25,25 +25,41 @@ def upload(uploadFile):
     try:
         upload = open(uploadFile, "rb")
         client.put_file("/" + uploadFile, upload)
-        print "You have uploaded "+ uploadFile+" to your dropbox."
+        print "You have uploaded " + uploadFile + " to your dropbox."
     except ErrorResponse:
         print "Something went wrong. " + ErrorResponse
         
 def info():
     info = client.account_info()
-    print "Display name >> " +info["display_name"]        
-    print "Country >> " +info["country"]
+    print "Display name >> " + info["display_name"]        
+    print "Country >> " + info["country"]
 
-def list():
+
+# List different elements in remote folder / with parameters:
+# dir - for list all the folders
+# files - for list all the files
+# all - for list everything in root folder.
+def ls(listArg):
     try:
         itemArray = []
         folder = client.metadata("/", "true")
         itemArray = folder["contents"]
-        
-        for item in itemArray:
-            if item["is_dir"] is True:
-                print item["path"]
-            
+        if listArg == "dir":  # <- list only dirs
+            for item in itemArray:
+                if item["is_dir"] is True:
+                    print item["path"]
+        elif listArg == "files":  # <- list only files
+            for item in itemArray:
+                if item["is_dir"] is False:
+                    print "# "+item["path"]
+        elif listArg == "all":  # <- list all the files and dirs.
+            sortedArray = sorted(itemArray, key=lambda item: item["is_dir"])
+            for item in sortedArray:
+                if item["is_dir"] == True:
+                    print item["path"]
+                else: 
+                    print "# "+item["path"]
+                
     except ErrorResponse:
         print "something went wrong " + ErrorResponse
         
