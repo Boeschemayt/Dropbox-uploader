@@ -81,14 +81,13 @@ def delete(argv):
             print "Abort"
         else:
             print "Wrong command. Use Yes or No"
-        
+          
     except ErrorResponse, e:
         print "something went wrong! \n", e
 
 def download(argv):
     #TODO <--
     pass
-
 
         
 if __name__ == "__main__":
