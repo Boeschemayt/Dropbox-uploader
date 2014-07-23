@@ -14,6 +14,9 @@ def main(argv):
     elif argv == "info":
         getAccessToken()
         info()
+    elif argv == "rm":
+        getAccessToken()
+        delete(sys.argv[2])
     else:
         print "Not a valid command."
 
@@ -65,12 +68,22 @@ def ls(listArg):
                 else: 
                     print "# "+item["path"]
                 
-    except ErrorResponse:
-        print "something went wrong " + ErrorResponse
+    except ErrorResponse, e:
+        print "something went wrong! \n", e
         
 def delete(argv):
-    #TODO <--
-    pass
+    try:
+        print "Are you sure you want to delete "+ argv+"?"
+        answer = raw_input("Yes | No\n").lower()
+        if answer == "yes":
+            client.file_delete(argv)
+        elif answer == "no":
+            print "Abort"
+        else:
+            print "Wrong command. Use Yes or No"
+        
+    except ErrorResponse, e:
+        print "something went wrong! \n", e
 
 def download(argv):
     #TODO <--
