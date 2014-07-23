@@ -7,7 +7,10 @@ def main(argv):
     if argv == "upload":
         getAccessToken()
         upload(sys.argv[2])
-    else:
+    elif argv == "list":
+        getAccessToken()
+        list()
+    elif argv == "info":
         getAccessToken()
         info()
 
@@ -30,7 +33,19 @@ def info():
     info = client.account_info()
     print "Display name >> " +info["display_name"]        
     print "Country >> " +info["country"]
-        
 
+def list():
+    try:
+        itemArray = []
+        folder = client.metadata("/", "true")
+        itemArray = folder["contents"]
+        
+        for item in itemArray:
+            if item["is_dir"] is True:
+                print item["path"]
+            
+    except ErrorResponse:
+        print "something went wrong " + ErrorResponse
+        
 if __name__ == "__main__":
     main(sys.argv[1])
