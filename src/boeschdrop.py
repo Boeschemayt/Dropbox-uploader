@@ -4,6 +4,7 @@ from dropbox.rest import ErrorResponse
 client = ""
 
 def main(argv):
+
     if argv == "upload":
         getAccessToken()
         upload(sys.argv[2])
@@ -13,6 +14,8 @@ def main(argv):
     elif argv == "info":
         getAccessToken()
         info()
+    else:
+        print "Not a valid command."
 
 def getAccessToken():
     global client
@@ -20,7 +23,9 @@ def getAccessToken():
         access_token = text_file.readline().rstrip()
         client = dropbox.client.DropboxClient(access_token)
     return access_token   
-        
+
+#Upload function with one parameter, uploadfile.
+#TODO - fix chunked upload for bigger files over 150MB.
 def upload(uploadFile):
     try:
         upload = open(uploadFile, "rb")
@@ -62,6 +67,16 @@ def ls(listArg):
                 
     except ErrorResponse:
         print "something went wrong " + ErrorResponse
+        
+def delete(argv):
+    #TODO <--
+    pass
+
+def download(argv):
+    #TODO <--
+    pass
+
+
         
 if __name__ == "__main__":
     main(sys.argv[1])
