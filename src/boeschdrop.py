@@ -17,6 +17,9 @@ def main(argv):
     elif argv == "rm":
         getAccessToken()
         delete(sys.argv[2])
+    elif argv == "get":
+        getAccessToken()
+        download(sys.argv[2])
     else:
         print "Not a valid command."
 
@@ -86,9 +89,12 @@ def delete(argv):
         print "something went wrong! \n", e
 
 def download(argv):
-    #TODO <--
-    pass
-
+    try:
+        down = open(argv, "wb")
+        with client.get_file(argv) as f:
+            down.write(f.read())
+    except ErrorResponse, e:
+        print "Something went wrong!\n", e
         
 if __name__ == "__main__":
     main(sys.argv[1])
