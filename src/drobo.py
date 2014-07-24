@@ -2,7 +2,6 @@ import dropbox
 import sys
 import os
 from dropbox.rest import ErrorResponse
-from compiler.pycodegen import EXCEPT
 client = ""
 
 def main(argv):
