@@ -1,13 +1,16 @@
 import dropbox
 import sys
+import os
 from dropbox.rest import ErrorResponse
+from compiler.pycodegen import EXCEPT
 client = ""
 
 def main(argv):
 
     if argv == "upload":
         getAccessToken()
-        upload(sys.argv[2])
+        #upload(sys.argv[2])
+        chunkedUpload("logo.png")
     elif argv == "ls":
         getAccessToken()
         ls(sys.argv[2])
@@ -95,6 +98,19 @@ def download(argv):
             down.write(f.read())
     except ErrorResponse, e:
         print "Something went wrong!\n", e
+        
+def chunkedUpload(argv):
+    try:
+        f = open(argv, "rb")
+        size = os.path.getsize(argv)
+        up = client.get_chunked_uploader(f, size)
+        while up.offset < size:
+            up.upload_chunked()
+            up.finish(argv)
+            
+    except ErrorResponse, e:
+        print "something went wrong\n", e
+            
         
 if __name__ == "__main__":
     main(sys.argv[1])
