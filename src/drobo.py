@@ -2,14 +2,14 @@ import dropbox
 import sys
 import os
 from dropbox.rest import ErrorResponse
+
 client = ""
 
 def main(argv):
 
     if argv == "upload":
         getAccessToken()
-        #upload(sys.argv[2])
-        chunkedUpload("logo.png")
+        chunkedUpload(sys.argv[2])
     elif argv == "ls":
         getAccessToken()
         ls(sys.argv[2])
@@ -32,15 +32,6 @@ def getAccessToken():
         client = dropbox.client.DropboxClient(access_token)
     return access_token   
 
-#Upload function with one parameter, uploadfile.
-#TODO - fix chunked upload for bigger files over 150MB.
-def upload(uploadFile):
-    try:
-        upload = open(uploadFile, "rb")
-        client.put_file("/" + uploadFile, upload)
-        print "You have uploaded " + uploadFile + " to your dropbox."
-    except ErrorResponse:
-        print "Something went wrong. " + ErrorResponse
         
 def info():
     info = client.account_info()
@@ -97,16 +88,18 @@ def download(argv):
             down.write(f.read())
     except ErrorResponse, e:
         print "Something went wrong!\n", e
-        
+
+#Upload files function. Parameters:
+#file -       
 def chunkedUpload(argv):
+    
     try:
         f = open(argv, "rb")
-        size = os.path.getsize(argv)
+        size = os.path.getsize(argv) #<- get size of the parameter/file.
         up = client.get_chunked_uploader(f, size)
         while up.offset < size:
             up.upload_chunked()
             up.finish(argv)
-            
     except ErrorResponse, e:
         print "something went wrong\n", e
             
