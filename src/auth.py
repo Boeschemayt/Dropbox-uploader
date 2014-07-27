@@ -1,4 +1,5 @@
 import dropbox
+from simplecrypt import encrypt
 
 app_key = "zigq5mu2x2jojmt"
 app_secret = "biwwzh9fex3r5fu"
@@ -11,12 +12,14 @@ def main():
     print authUrl
     code = raw_input("Enter the Auth code here:").strip()
     access_token, user_id = flow.finish(code)
-    saveAuthCode(access_token, user_id)
+    password = raw_input("select a password for your Authentication.")
+    saveAuthCode(access_token, password)
      
-def saveAuthCode(auth, user_id):
-    authsArray = [auth+"\n", user_id]
+def saveAuthCode(auth, password):
+    cipherAuth = encrypt(password, auth)
     with open("AuthCode.txt", "w") as text_file:
-        text_file.writelines(authsArray)
+        text_file.writelines(cipherAuth)
+        
         
 if __name__ == "__main__":
     main()

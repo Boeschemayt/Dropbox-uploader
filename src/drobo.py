@@ -2,7 +2,7 @@ import dropbox
 import sys
 import os
 from dropbox.rest import ErrorResponse
-
+from simplecrypt import decrypt, DecryptionException
 client = ""
 
 def main(argv):
@@ -26,11 +26,18 @@ def main(argv):
         print "Not a valid command."
 
 def getAccessToken():
-    global client
-    with open("AuthCode.txt", "r") as text_file:
-        access_token = text_file.readline().rstrip()
-        client = dropbox.client.DropboxClient(access_token)
-    return access_token   
+    try:
+        global client
+        with open("AuthCode.txt", "r") as text_file:
+            access_token = text_file.readline().rstrip()
+            passWd = raw_input("Password:")
+            plaintextToken = decrypt(passWd, access_token)
+            client = dropbox.client.DropboxClient(plaintextToken)
+        return access_token
+    except DecryptionException, e:
+        print "**************************"
+        print "Something went wrong\n", e
+        print "**************************"
 
         
 def info():
@@ -65,7 +72,9 @@ def ls(listArg):
                     print "# "+item["path"]
                 
     except ErrorResponse, e:
-        print "something went wrong! \n", e
+        print "**************************"
+        print "Something went wrong\n", e
+        print "**************************"
         
 def delete(argv):
     try:
@@ -79,7 +88,9 @@ def delete(argv):
             print "Wrong command. Use Yes or No"
           
     except ErrorResponse, e:
-        print "something went wrong! \n", e
+        print "**************************"
+        print "Something went wrong\n", e
+        print "**************************"
 
 def download(argv):
     try:
@@ -87,7 +98,9 @@ def download(argv):
         with client.get_file(argv) as f:
             down.write(f.read())
     except ErrorResponse, e:
-        print "Something went wrong!\n", e
+        print "**************************"
+        print "Something went wrong\n", e
+        print "**************************"
 
 #Upload files function. Parameters:
 #file -       
@@ -101,7 +114,9 @@ def chunkedUpload(argv):
             up.upload_chunked()
             up.finish(argv)
     except ErrorResponse, e:
-        print "something went wrong\n", e
+        print "**************************"
+        print "Something went wrong\n", e
+        print "**************************"
             
         
 if __name__ == "__main__":
