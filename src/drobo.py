@@ -3,6 +3,7 @@ import sys
 import os
 from dropbox.rest import ErrorResponse
 from simplecrypt import decrypt, DecryptionException
+import xml.etree.ElementTree as et
 client = ""
 
 def main(argv):
@@ -23,27 +24,27 @@ def main(argv):
         getAccessToken()
         download(sys.argv[2])
     else:
-        print "Not a valid command."
+        print("Not a valid command.")
 
 def getAccessToken():
     try:
         global client
-        with open("AuthCode.txt", "r") as text_file:
-            access_token = text_file.readline().rstrip()
-            passWd = raw_input("Password:")
-            plaintextToken = decrypt(passWd, access_token)
-            client = dropbox.client.DropboxClient(plaintextToken)
+        tree = et.parse("authsave.xml")
+        root = tree.getroot()
+        access_token = root[0][0].text
+        client = dropbox.client.DropboxClient(access_token)
         return access_token
-    except DecryptionException, e:
-        print "**************************"
-        print "Something went wrong\n", e
-        print "**************************"
+    
+    except DecryptionException as e:
+        print("**************************")
+        print("Something went wrong\n", e)
+        print("**************************")  
 
         
 def info():
     info = client.account_info()
-    print "Display name >> " + info["display_name"]        
-    print "Country >> " + info["country"]
+    print("Display name >> " + info["display_name"])        
+    print ("Country >> " + info["country"])
 
 
 # List different elements in remote folder / with parameters:
@@ -58,49 +59,49 @@ def ls(listArg):
         if listArg == "dir":  # <- list only dirs
             for item in itemArray:
                 if item["is_dir"] is True:
-                    print item["path"]
+                    print(item["path"])
         elif listArg == "files":  # <- list only files
             for item in itemArray:
                 if item["is_dir"] is False:
-                    print "# "+item["path"]
+                    print("# "+item["path"])
         elif listArg == "all":  # <- list all the files and dirs.
             sortedArray = sorted(itemArray, key=lambda item: item["is_dir"])
             for item in sortedArray:
                 if item["is_dir"] == True:
-                    print item["path"]
+                    print(item["path"])
                 else: 
-                    print "# "+item["path"]
+                    print("# "+item["path"])
                 
-    except ErrorResponse, e:
-        print "**************************"
-        print "Something went wrong\n", e
-        print "**************************"
+    except ErrorResponse as e:
+        print("**************************")
+        print("Something went wrong\n", e)
+        print("**************************")  
         
 def delete(argv):
     try:
-        print "Are you sure you want to delete "+ argv+"?"
-        answer = raw_input("Yes | No\n").lower()
+        print("Are you sure you want to delete "+ argv+"?")
+        answer = input("Yes | No\n").lower()
         if answer == "yes":
             client.file_delete(argv)
         elif answer == "no":
-            print "Abort"
+            print("Abort")
         else:
-            print "Wrong command. Use Yes or No"
+            print("Wrong command. Use Yes or No")
           
-    except ErrorResponse, e:
-        print "**************************"
-        print "Something went wrong\n", e
-        print "**************************"
+    except ErrorResponse as e:
+        print("**************************")
+        print("Something went wrong\n", e)
+        print("**************************")  
 
 def download(argv):
     try:
         down = open(argv, "wb")
         with client.get_file(argv) as f:
             down.write(f.read())
-    except ErrorResponse, e:
-        print "**************************"
-        print "Something went wrong\n", e
-        print "**************************"
+    except ErrorResponse as e:
+        print("**************************")
+        print("Something went wrong\n", e)
+        print("**************************")  
 
 #Upload files function. Parameters:
 #file -       
@@ -113,10 +114,10 @@ def chunkedUpload(argv):
         while up.offset < size:
             up.upload_chunked()
             up.finish(argv)
-    except ErrorResponse, e:
-        print "**************************"
-        print "Something went wrong\n", e
-        print "**************************"
+    except ErrorResponse as e:
+        print("**************************")
+        print("Something went wrong\n", e)
+        print("**************************")  
             
         
 if __name__ == "__main__":

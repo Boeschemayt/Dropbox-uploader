@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*-
 import dropbox
 from simplecrypt import encrypt
 import xml.etree.ElementTree as et
 from xml.etree.ElementTree import ParseError
-
+from binascii import hexlify
+from lxml.html import tostring
 
 app_key = "zigq5mu2x2jojmt"
 app_secret = "biwwzh9fex3r5fu"
@@ -11,29 +11,32 @@ flow = dropbox.client.DropboxOAuth2FlowNoRedirect(app_key, app_secret)
 def main():
 
     authUrl = flow.start()
-     
-    print "Go to this URL and press Accept"
-    print authUrl
-    code = raw_input("Enter the Auth code here:").strip()
+       
+    print("Go to this URL and press Accept")
+    print (authUrl)
+    code = input("Enter the Auth code here:").strip()
     access_token, user_id = flow.finish(code)
-    password = raw_input("select a password for your Authentication.")
+    password = input("select a password for your Authentication.")
     saveAuthCode(access_token, password)
      
 def saveAuthCode(auth, password):
-    cipherAuth = encrypt(password, auth)
-    cipherpass = encrypt(password, password)
-    try:
-        tree = et.parse("auth.xml")
-        root = tree.getroot()
-        root[0][0].text = cipherAuth
-        root[0][1].text = cipherpass
-        tree.write("auth.xml")
-        
-    except ParseError, e:
-        print "**************************"
-        print "Something went wrong\n", e
-        print "**************************"    
+    #Todo. encrypt and save in the xml file.
+    #cipherAuth = encrypt(password, auth)
+    #cipherpass = encrypt(password, password)
     
+    try:
+        tree = et.parse("authsave.xml")
+        root = tree.getroot()
+        root[0][0].text = auth
+        root[0][1].text = password
+        root[0][2].text = "null"
+        tree.write("authsave.xml")
+         
+    except ParseError as e:
+        print("**************************")
+        print("Something went wrong\n", e)
+        print("**************************")    
+     
     
 
         
