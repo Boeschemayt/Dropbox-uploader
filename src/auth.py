@@ -1,9 +1,8 @@
 import dropbox
-from simplecrypt import encrypt
 import xml.etree.ElementTree as et
 from xml.etree.ElementTree import ParseError
 from binascii import hexlify
-from lxml.html import tostring
+
 
 app_key = "zigq5mu2x2jojmt"
 app_secret = "biwwzh9fex3r5fu"
