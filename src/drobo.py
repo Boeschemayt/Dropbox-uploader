@@ -2,7 +2,6 @@ import dropbox
 import sys
 import os
 from dropbox.rest import ErrorResponse
-from simplecrypt import decrypt, DecryptionException
 import xml.etree.ElementTree as et
 client = ""
 
