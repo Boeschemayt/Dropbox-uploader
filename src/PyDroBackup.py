@@ -8,13 +8,15 @@ from drobo import chunkedUpload, getAccessToken
 def main(argv):
 	
 	if argv == "backup":
-		startBackup(sys.argv[2])
+		startBackup(fileToBackup(sys.argv[2]))
 
-
-def startBackup(fileArgv):
+def fileToBackup(sysArgv):
 	getAccessToken()
+	chunkedUpload(sysArgv)
+
+def startBackup(argv):
 	sc = BackgroundScheduler()
-	sc.add_job(chunkedUpload(fileArgv), 'interval', seconds=3)
+	sc.add_job(argv, 'interval', seconds=60)
 	sc.start()
 	try:
 		while True:
