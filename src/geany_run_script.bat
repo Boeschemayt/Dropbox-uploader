@@ -1,4 +1,4 @@
-python "drobo.py"
+python "droboBackup.py"
 
 pause
 del "%0"
