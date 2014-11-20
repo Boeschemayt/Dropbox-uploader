@@ -5,16 +5,19 @@ import time
 from apscheduler.schedulers.background import BackgroundScheduler
 from drobo import chunkedUpload, getAccessToken, ls
 
-def main():
-	startBackup()
-	
+def main(command):
+	if command == "backup":
+		startBackup()
+	else:
+		print("Not a valid command.")
 
 def test():
 		getAccessToken()
-		fileToBackUp = chunkedUpload(sys.argv[1])
+		fileToBackUp = chunkedUpload(sys.argv[2])
 def startBackup():
+	timeArgv = int(sys.argv[3])
 	sc = BackgroundScheduler()
-	sc.add_job(test, 'interval', seconds=5)
+	sc.add_job(test, 'interval', seconds=timeArgv)
 	sc.start()
 	try:
 		while True:
@@ -23,6 +26,6 @@ def startBackup():
 		sc.shutdown()
 
 if __name__ == '__main__':
-	main()
+	main(sys.argv[1])
 
 
